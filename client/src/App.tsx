@@ -1,4 +1,4 @@
-import VideoFeed from './Video.tsx'
+import VideoFeed from './VideoFeed.tsx'
 
 function App() {
   console.log("App")
