@@ -11,7 +11,8 @@ export default function VideoFeed() {
         isLoading,
         videoRef,
         startWebcam,
-        stopWebcam
+        stopWebcam,
+        audioOnlyStream,
     } = useWebcam({
         video: {
             width: { ideal: 1280 },
@@ -24,7 +25,13 @@ export default function VideoFeed() {
         startRecording,
         stopRecording,
         isRecording,
-        transcript } = useAudioRecorder(mediaStream);
+        transcript } = useAudioRecorder(audioOnlyStream);
+
+    useEffect(() => {
+        if (mediaStream) {
+            startRecording();
+        }
+    }, [mediaStream])
 
     return (
         <div className="flex flex-col w-full h-full gap-4 p-4">
@@ -60,7 +67,10 @@ export default function VideoFeed() {
                     {isLoading ? "Starting..." : "Start Webcam"}
                 </button>
                 <button
-                    onClick={stopWebcam}
+                    onClick={() => {
+                        stopWebcam();
+                        stopRecording();
+                    }}
                     disabled={!mediaStream}
                     className="bg-red-500 hover:bg-red-600 disabled:bg-gray-400 disabled:cursor-not-allowed text-white px-6 py-2 rounded-md transition-colors"
                 >

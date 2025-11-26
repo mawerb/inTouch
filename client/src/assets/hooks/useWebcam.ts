@@ -8,6 +8,7 @@ interface UseWebcamOptions {
 
 export const useWebcam = (options: UseWebcamOptions = { video: true, audio: true }) => {
     const [mediaStream, setMediaStream] = useState<MediaStream | null>(null);
+    const [audioOnlyStream, setAudioOnlyStream] = useState<MediaStream | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const videoRef = useRef<HTMLVideoElement>(null);
@@ -77,6 +78,10 @@ Current URL: ${window.location.href}
                             audio: options.audio 
                         });
                         setMediaStream(stream);
+
+                        const audioTrack = stream.getAudioTracks()[0];
+                        setAudioOnlyStream(new MediaStream([audioTrack]));
+
                         setError(null);
                     } catch (retryErr) {
                         handleMediaError(retryErr, false);
@@ -115,6 +120,10 @@ Current URL: ${window.location.href}
         try {
             const stream = await navigator.mediaDevices.getUserMedia(options);
             setMediaStream(stream);
+
+            const audioTrack = stream.getAudioTracks()[0];
+            setAudioOnlyStream(new MediaStream([audioTrack]));
+            
             setError(null);
         } catch (err) {
             await handleMediaError(err);
@@ -156,6 +165,7 @@ Current URL: ${window.location.href}
         isLoading,
         videoRef,
         startWebcam,
-        stopWebcam
+        stopWebcam,
+        audioOnlyStream
     };
 };
