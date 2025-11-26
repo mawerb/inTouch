@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 
-export const useAudioRecorder = (mediaStream: MediaStream | null) => {
+export const useAudioRecorder = (audioOnlyStream: MediaStream | null) => {
     const [audioRecorder, setAudioRecorder] = useState<MediaRecorder | null>(null);
     const [isRecording, setIsRecording] = useState<boolean>(false);
     const [transcript, setTranscript] = useState<string>('');
@@ -40,8 +40,8 @@ export const useAudioRecorder = (mediaStream: MediaStream | null) => {
     }, [])
 
     const startRecording = useCallback(() => {
-        console.log("HELLO!")
-        if (!mediaStream) {
+
+        if (!audioOnlyStream) {
             console.error('No media stream available');
             return;
         }
@@ -60,7 +60,7 @@ export const useAudioRecorder = (mediaStream: MediaStream | null) => {
         const startNewRecorder = () => {
             if (!isRecordingRef.current) return;  // Stop if recording was stopped
 
-            const recorder = new MediaRecorder(mediaStream, {
+            const recorder = new MediaRecorder(audioOnlyStream, {
                 mimeType: selectedMimeType
             });
 
@@ -102,7 +102,7 @@ export const useAudioRecorder = (mediaStream: MediaStream | null) => {
 
         // Start the first recorder
         startNewRecorder();
-    }, [mediaStream, selectedMimeType]);
+    }, [audioOnlyStream, selectedMimeType]);
 
     const stopRecording = useCallback(() => {
         if (audioRecorder) {

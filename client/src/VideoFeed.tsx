@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react"
 import { useAudioRecorder } from './assets/hooks/useAudioRecorder';
 import { useWebcam } from "./assets/hooks/useWebcam";
+import { useWebCamRecorder } from "./assets/hooks/useWebcamRecorder";
 
 export default function VideoFeed() {
     const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -27,9 +28,18 @@ export default function VideoFeed() {
         isRecording,
         transcript } = useAudioRecorder(audioOnlyStream);
 
+    const {
+        detectFrame,
+        stopDetecting,
+        isPersonDetected,
+        isDetectingFace,
+        name,
+    } = useWebCamRecorder(videoRef, canvasRef);
+
     useEffect(() => {
         if (mediaStream) {
-            startRecording();
+            // startRecording();
+            detectFrame();
         }
     }, [mediaStream])
 
@@ -70,6 +80,7 @@ export default function VideoFeed() {
                     onClick={() => {
                         stopWebcam();
                         stopRecording();
+                        stopDetecting();
                     }}
                     disabled={!mediaStream}
                     className="bg-red-500 hover:bg-red-600 disabled:bg-gray-400 disabled:cursor-not-allowed text-white px-6 py-2 rounded-md transition-colors"
