@@ -29,13 +29,30 @@ export const useWebCamRecorder = (videoRef: React.RefObject<HTMLVideoElement | n
 
             ctx?.drawImage(videoElement, 0, 0)
 
-            canvas.toBlob((blob) => {
+
+            canvas.toBlob(async (blob) => {
                 if (!blob) {
                     console.error("Frame couldn't be converted to Blob")
                     return;
                 }
-                console.log(blob)
                 console.log('size:', blob.size, 'type:', blob.type);
+
+                const formData = new FormData();
+                formData.append('frame', blob, 'frame.jpeg');
+
+                const response = await fetch('http://127.0.0.1:8000/api/facial_recognition/', {
+                    method: 'POST',
+                    body: formData,
+                })
+
+                const result = await response.json()
+
+                if (Object.hasOwn(result, 'name')
+                    && Object.hasOwn(result, 'isPersonDetected')) {
+                        setName(result.name);
+                        setIsPersonDetected(result.isPersonDetected);
+                }
+
             }, 'image/jpeg', 0.8)
 
             setTimeout(detectFrame, 3000);
